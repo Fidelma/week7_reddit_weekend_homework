@@ -3,6 +3,8 @@
     <select-post :posts="posts"/>
     <button type="button" @click="getLatest">Get latest</button>
     <full-post :post="selectedPost"/>
+    <button v-if="selectedPost" type="button" @click="">View Comments</button>
+    <selected-comments v-if="comments" :comments="comments"/>
   </div>
 </template>
 
@@ -10,12 +12,14 @@
 import { eventBus } from '@/main.js'
 import SelectPost from './components/PostSelect'
 import FullPost from './components/FullPost'
+import SelectedComments from './components/SelectedComments'
 
 export default {
   data(){
     return {
       posts: [],
-      selectedPost: null
+      selectedPost: null,
+      comments: []
     }
   },
 
@@ -23,7 +27,7 @@ export default {
     eventBus.$on('post-selected', (index) => {
       this.selectedPost = this.posts[index];
     })
-    getLatest()
+    this.getLatest()
 
 
 
@@ -31,10 +35,20 @@ export default {
     //   .then(res => res.json())
     //   .then(returnedData => this.posts = returnedData.data.children)
   },
+  computed: {
+    seeComments(){
+      const commentsURL = this.selectedPost.data.url
+      const jsonCommentsURL = commentsURL + '.json'
+      fetch(jsonCommentsURL)
+        .then(res => res.json())
+        .then(comments => this.comments = comments[1].data.children)
+    }
+  },
 
   components: {
     "select-post": SelectPost,
-    "full-post": FullPost
+    "full-post": FullPost,
+    "selected-comments": SelectedComments
   },
 
   methods: {
@@ -42,7 +56,15 @@ export default {
      fetch('https://www.reddit.com/r/AmItheAsshole/top/.json')
        .then(res => res.json())
        .then(returnedData => this.posts = returnedData.data.children)
-    }
+    },
+
+    // seeComments(){
+    //   const commentsURL = this.selectedPost.data.url
+    //   const jsonCommentsURL = commentsURL + '.json'
+    //   fetch(jsonCommentsURL)
+    //     .then(res => res.json())
+    //     .then(comments => this.comments = comments[1].data.children)
+    // }
   }
 }
 </script>
