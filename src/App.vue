@@ -1,28 +1,51 @@
-<template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+<template lang="html">
+  <div class="">
+    <select-post :posts="posts"/>
+    <button type="button" @click="getLatest">Get latest</button>
+    <full-post :post="selectedPost"/>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import { eventBus } from '@/main.js'
+import SelectPost from './components/PostSelect'
+import FullPost from './components/FullPost'
 
 export default {
-  name: 'app',
+  data(){
+    return {
+      posts: [],
+      selectedPost: null
+    }
+  },
+
+  mounted() {
+    eventBus.$on('post-selected', (index) => {
+      this.selectedPost = this.posts[index];
+    })
+    getLatest()
+
+
+
+    // fetch('https://www.reddit.com/r/AmItheAsshole/top/.json')
+    //   .then(res => res.json())
+    //   .then(returnedData => this.posts = returnedData.data.children)
+  },
+
   components: {
-    HelloWorld
+    "select-post": SelectPost,
+    "full-post": FullPost
+  },
+
+  methods: {
+   getLatest(){
+     fetch('https://www.reddit.com/r/AmItheAsshole/top/.json')
+       .then(res => res.json())
+       .then(returnedData => this.posts = returnedData.data.children)
+    }
   }
 }
 </script>
 
-<style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+<style lang="css" scoped>
 </style>
