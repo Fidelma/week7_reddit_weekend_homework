@@ -82,17 +82,18 @@ export default {
       //   console.log(comment);
       // }
       this.comments.slice(1).forEach((comment)=> {
-        console.log(comment.data.body.toString().includes('y'));
-        // if (comment.data.body.toString().includes('YTA')) {
-        //   console.log(comment);
-        //   this.result.YTA += 1
-        // } else if (comment.data.body.toString().includes('NTA')) {
-        //   this.result.NTA += 1
-        // } else if (comment.data.body.toString().inlcudes('ESH')) {
-        //   this.result.ESH += 1
-        // } else {
-        //   this.result.NAH +=1
-        // }
+        if (comment.data.body) {
+
+          if (comment.data.body.toString().includes('YTA')) {
+            this.result.YTA += 1
+          } else if (comment.data.body.toString().includes('NTA')) {
+            this.result.NTA += 1
+          } else if (comment.data.body.toString().inlcudes('ESH')) {
+            this.result.ESH += 1
+          } else {
+            this.result.NAH +=1
+          }
+      }
     })
     // return assholes
     }
